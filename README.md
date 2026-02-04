@@ -37,7 +37,7 @@ A secure and modern mobile application built with **React Native + TypeScript** 
 ## 📸 Screenshots
 
 ### Login Screen
-![Login](assets/images/login.png)
+![Login](IzikwenApp/assets/images/login.png)
 
 ### Two-Factor Authentication
 ![2FA](assets/images/2fa.png)
