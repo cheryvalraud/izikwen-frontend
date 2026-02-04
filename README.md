@@ -33,23 +33,18 @@ A secure and modern mobile application built with **React Native + TypeScript** 
 - PostgreSQL / MySQL / H2 / MongoDB *(choose yours)*
 
 ---
-
 ## 📸 Screenshots
 
-### Login Screen
-![Login](IzikwenApp/assets/images/login.png)
+<p align="center">
+  <img src="IzikwenApp/assets/images/login.png" width="220" />
+  <img src="IzikwenApp/assets/images/2fa.PNG" width="220" />
+  <img src="IzikwenApp/assets/images/dashboard.PNG" width="220" />
+</p>
 
-### Two-Factor Authentication
-![2FA](assets/images/2fa.png)
-
-### Dashboard
-![Dashboard](assets/images/dashboard.png)
-
-### Payment / Wallet
-![Payment](assets/images/payment.png)
-
-### Profile
-![Profile](assets/images/profile.png)
+<p align="center">
+  <img src="IzikwenApp/assets/images/payment.PNG" width="220" />
+  <img src="IzikwenApp/assets/images/profile.PNG" width="220" />
+</p>
 
 ---
 
