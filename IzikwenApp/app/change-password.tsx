@@ -12,10 +12,11 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { api } from "../service/api"; 
+import { api } from "../service/api";
 import { tokenStorage } from "../utils/tokenStorage";
 
 export default function ChangePasswordScreen() {
@@ -65,11 +66,12 @@ export default function ChangePasswordScreen() {
         newPassword,
       });
 
-      const accessToken = res.data?.accessToken as string | undefined;
-      const refreshToken = res.data?.refreshToken as string | undefined;
+      const accessToken = res.data?.accessToken;
+      const refreshToken = res.data?.refreshToken;
 
-      // keep user logged in with fresh tokens
-      if (accessToken) await tokenStorage.setTokens(accessToken, refreshToken);
+      if (accessToken) {
+        await tokenStorage.setTokens(accessToken, refreshToken);
+      }
 
       Alert.alert("Success", "Your password has been updated.");
       router.back();
@@ -85,107 +87,133 @@ export default function ChangePasswordScreen() {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        style={[styles.page, { backgroundColor: colors.bg }]}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        {/* Header */}
-        <View style={styles.headerRow}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={[styles.iconBtn, { borderColor: colors.border }]}
-          >
-            <Ionicons name="arrow-back" size={20} color={colors.text} />
-          </TouchableOpacity>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.bg }]}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          {/* Header */}
+          <View style={styles.headerRow}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={[styles.iconBtn, { borderColor: colors.border }]}
+            >
+              <Ionicons name="arrow-back" size={20} color={colors.text} />
+            </TouchableOpacity>
 
-          <Text style={[styles.headerTitle, { color: colors.text }]}>
-            Change Password
-          </Text>
-
-          <View style={{ width: 44 }} />
-        </View>
-
-        {/* Card */}
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.subtitle, { color: colors.sub }]}>
-            For your security, changing password will invalidate old tokens on other devices.
-          </Text>
-
-          <Text style={[styles.label, { color: colors.sub }]}>Current Password</Text>
-          <TextInput
-            style={[styles.input, { borderColor: colors.border, color: colors.text }]}
-            placeholder="••••••••"
-            placeholderTextColor={colors.sub}
-            secureTextEntry
-            value={currentPassword}
-            onChangeText={setCurrentPassword}
-            autoCapitalize="none"
-          />
-
-          <Text style={[styles.label, { color: colors.sub }]}>New Password</Text>
-          <TextInput
-            style={[styles.input, { borderColor: colors.border, color: colors.text }]}
-            placeholder="At least 8 characters"
-            placeholderTextColor={colors.sub}
-            secureTextEntry
-            value={newPassword}
-            onChangeText={setNewPassword}
-            autoCapitalize="none"
-          />
-
-          <Text style={[styles.label, { color: colors.sub }]}>Confirm New Password</Text>
-          <TextInput
-            style={[styles.input, { borderColor: colors.border, color: colors.text }]}
-            placeholder="Repeat new password"
-            placeholderTextColor={colors.sub}
-            secureTextEntry
-            value={confirm}
-            onChangeText={setConfirm}
-            autoCapitalize="none"
-          />
-
-          <TouchableOpacity
-            style={[
-              styles.button,
-              { backgroundColor: colors.btn },
-              loading && { opacity: 0.7 },
-            ]}
-            onPress={submit}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color={colors.btnText} />
-            ) : (
-              <Text style={[styles.buttonText, { color: colors.btnText }]}>
-                Update Password
-              </Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.cancelRow}
-            onPress={() => router.back()}
-          >
-            <Text style={[styles.cancelText, { color: colors.sub }]}>
-              Cancel
+            <Text style={[styles.headerTitle, { color: colors.text }]}>
+              Change Password
             </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+
+            <View style={{ width: 44 }} />
+          </View>
+
+          {/* Center Wrapper */}
+          <View style={styles.centerWrapper}>
+            <View
+              style={[
+                styles.card,
+                {
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              <Text style={[styles.subtitle, { color: colors.sub }]}>
+                For your security, changing password will invalidate old
+                tokens on other devices.
+              </Text>
+
+              {/* Inputs */}
+              <Text style={[styles.label, { color: colors.sub }]}>
+                Current Password
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  { borderColor: colors.border, color: colors.text },
+                ]}
+                secureTextEntry
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+              />
+
+              <Text style={[styles.label, { color: colors.sub }]}>
+                New Password
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  { borderColor: colors.border, color: colors.text },
+                ]}
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+              />
+
+              <Text style={[styles.label, { color: colors.sub }]}>
+                Confirm New Password
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  { borderColor: colors.border, color: colors.text },
+                ]}
+                secureTextEntry
+                value={confirm}
+                onChangeText={setConfirm}
+              />
+
+              {/* Button */}
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  { backgroundColor: colors.btn },
+                  loading && { opacity: 0.7 },
+                ]}
+                onPress={submit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color={colors.btnText} />
+                ) : (
+                  <Text
+                    style={[styles.buttonText, { color: colors.btnText }]}
+                  >
+                    Update Password
+                  </Text>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cancelRow}
+                onPress={() => router.back()}
+              >
+                <Text style={[styles.cancelText, { color: colors.sub }]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, padding: 18 },
+  safeArea: { flex: 1 },
+  flex: { flex: 1 },
+
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: 10,
-    paddingBottom: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
   },
+
   iconBtn: {
     width: 44,
     height: 44,
@@ -194,13 +222,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   headerTitle: { fontSize: 18, fontWeight: "900" },
-  card: { borderWidth: 1, borderRadius: 18, padding: 16 },
+
+  centerWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 18,
+  },
+
+  card: {
+    width: "100%",
+    maxWidth: 420,
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 16,
+  },
+
   subtitle: { fontSize: 13, lineHeight: 18 },
+
   label: { fontSize: 12, fontWeight: "800", marginTop: 14, marginBottom: 6 },
+
   input: { borderWidth: 1, borderRadius: 12, padding: 12, fontSize: 15 },
+
   button: { marginTop: 18, padding: 14, borderRadius: 12 },
+
   buttonText: { fontSize: 15, fontWeight: "900", textAlign: "center" },
+
   cancelRow: { marginTop: 14, alignItems: "center" },
+
   cancelText: { fontSize: 13, fontWeight: "700" },
 });

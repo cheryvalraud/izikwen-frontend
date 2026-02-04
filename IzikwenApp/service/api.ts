@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { tokenStorage } from "../utils/tokenStorage";
 
-const API_BASE = "http://localhost:8080";
+const API_BASE = "http://10.0.0.119:8080";
 
 export const api = axios.create({
   baseURL: API_BASE,

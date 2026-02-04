@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 
-const API_HTTP = "http://localhost:8080";
+const API_HTTP = "http://10.0.0.119:8080";
 const API_WS = API_HTTP.replace("http://", "ws://") + "/ws/admin/orders";
 
 export function useAdminOrdersSocket(onEvent: (msg: any) => void) {

@@ -5,7 +5,9 @@ import {
   TouchableOpacity,
   ScrollView,
   useColorScheme,
+  Animated,
 } from "react-native";
+import { useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,110 +26,120 @@ const transactions = [
   { id: 3, type: "WITHDRAW", asset: "USDT", amount: 70, status: "Pending" },
 ];
 
-/* ---------------- Screen ---------------- */
-
 export default function WalletScreen() {
   const theme = useTheme();
   const total = balances.reduce((sum, b) => sum + b.usd, 0);
 
+  const fade = useRef(new Animated.Value(0)).current;
+  const slide = useRef(new Animated.Value(40)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fade, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slide, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.bg }]}>
-      <ScrollView
-        style={{ backgroundColor: theme.bg }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <LinearGradient
-          colors={["#16a34a", "#22d3ee"]}
-          style={styles.header}
-        >
-          <Text style={styles.balanceLabel}>Total Balance</Text>
-          <Text style={styles.balanceValue}>${total.toFixed(2)}</Text>
-
-          <View style={styles.actionRow}>
-            <Action icon="arrow-down" label="Deposit" />
-            <Action icon="arrow-up" label="Withdraw" />
-            <Action icon="swap-horizontal" label="Convert" />
-          </View>
-        </LinearGradient>
-
-        {/* Assets */}
-        <Text style={[styles.sectionTitle, { color: theme.subtext }]}>
-          Assets
-        </Text>
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: theme.card, borderColor: theme.border },
-          ]}
-        >
-          {balances.map((b) => (
-            <View key={b.symbol} style={styles.assetRow}>
-              <View style={styles.assetLeft}>
-                <FontAwesome5
-                  name="coins"
-                  size={16}
-                  color={theme.text}
-                />
-                <Text style={[styles.assetSymbol, { color: theme.text }]}>
-                  {b.symbol}
-                </Text>
-              </View>
-
-              <View style={styles.assetRight}>
-                <Text style={[styles.assetAmount, { color: theme.text }]}>
-                  {b.amount}
-                </Text>
-                <Text style={[styles.assetUsd, { color: theme.subtext }]}>
-                  ${b.usd.toFixed(2)}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        {/* Transactions */}
-        <Text style={[styles.sectionTitle, { color: theme.subtext }]}>
-          Recent Activity
-        </Text>
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: theme.card, borderColor: theme.border },
-          ]}
-        >
-          {transactions.map((t) => (
-            <View key={t.id} style={styles.txRow}>
-              <View>
-                <Text style={[styles.txType, { color: theme.text }]}>
-                  {t.type} {t.asset}
-                </Text>
-                <Text style={[styles.txAmount, { color: theme.subtext }]}>
-                  ${t.amount}
-                </Text>
-              </View>
-
-              <Text
-                style={[
-                  styles.txStatus,
-                  t.status === "Completed"
-                    ? styles.ok
-                    : styles.pending,
-                ]}
-              >
-                {t.status}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.centerWrapper}>
+          <Animated.View
+            style={{
+              opacity: fade,
+              transform: [{ translateY: slide }],
+              width: "100%",
+              maxWidth: 480,
+            }}
+          >
+            {/* HEADER */}
+            <LinearGradient
+              colors={["#16a34a", "#22d3ee"]}
+              style={styles.header}
+            >
+              <Text style={styles.balanceLabel}>Total Balance</Text>
+              <Text style={styles.balanceValue}>
+                ${total.toFixed(2)}
               </Text>
-            </View>
-          ))}
-        </View>
 
-        <View style={{ height: 140 }} />
+              <View style={styles.actionRow}>
+                <Action icon="arrow-down" label="Deposit" />
+                <Action icon="arrow-up" label="Withdraw" />
+                <Action icon="swap-horizontal" label="Convert" />
+              </View>
+            </LinearGradient>
+
+            {/* ASSETS */}
+            <SectionTitle theme={theme} title="Assets" />
+            <Card theme={theme}>
+              {balances.map((b) => (
+                <Row key={b.symbol} theme={theme} left={b.symbol} right={`$${b.usd}`} />
+              ))}
+            </Card>
+
+            {/* TX */}
+            <SectionTitle theme={theme} title="Recent Activity" />
+            <Card theme={theme}>
+              {transactions.map((t) => (
+                <Row
+                  key={t.id}
+                  theme={theme}
+                  left={`${t.type} ${t.asset}`}
+                  right={`$${t.amount}`}
+                />
+              ))}
+            </Card>
+
+            <View style={{ height: 140 }} />
+          </Animated.View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-/* ---------------- Components ---------------- */
+/* ---------- SMALL COMPONENTS ---------- */
+
+function SectionTitle({ theme, title }: any) {
+  return (
+    <Text style={[styles.sectionTitle, { color: theme.subtext }]}>
+      {title}
+    </Text>
+  );
+}
+
+function Card({ children, theme }: any) {
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.card,
+          borderColor: theme.border,
+        },
+      ]}
+    >
+      {children}
+    </View>
+  );
+}
+
+function Row({ left, right, theme }: any) {
+  return (
+    <View style={styles.row}>
+      <Text style={{ color: theme.text, fontWeight: "800" }}>{left}</Text>
+      <Text style={{ color: theme.subtext }}>{right}</Text>
+    </View>
+  );
+}
 
 function Action({ icon, label }: any) {
   return (
@@ -138,14 +150,13 @@ function Action({ icon, label }: any) {
   );
 }
 
-/* ---------------- Theme Hook ---------------- */
+/* ---------- THEME ---------- */
 
 function useTheme() {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
 
   return {
-    isDark,
     bg: isDark ? "#020817" : "#f9fafb",
     card: isDark ? "#020817" : "#ffffff",
     border: isDark ? "#1e293b" : "#e5e7eb",
@@ -154,17 +165,25 @@ function useTheme() {
   };
 }
 
-/* ---------------- Styles ---------------- */
+/* ---------- STYLES ---------- */
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
 
+  centerWrapper: {
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+
   header: {
-    paddingTop: 30,
-    paddingBottom: 24,
+    paddingVertical: 28,
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
+    borderRadius: 28,
+    marginTop: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
 
   balanceLabel: { color: "#ecfeff", fontSize: 14 },
@@ -177,74 +196,33 @@ const styles = StyleSheet.create({
 
   actionRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     marginTop: 22,
   },
 
-  actionBtn: { alignItems: "center", gap: 6 },
-  actionText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "700",
-  },
+  actionBtn: { alignItems: "center" },
+  actionText: { color: "#fff", fontSize: 12, fontWeight: "700" },
 
   sectionTitle: {
-    marginTop: 20,
+    marginTop: 24,
     marginBottom: 8,
-    paddingHorizontal: 16,
     fontSize: 16,
     fontWeight: "800",
   },
 
   card: {
-    borderRadius: 18,
-    padding: 14,
-    marginHorizontal: 16,
+    borderRadius: 20,
+    padding: 16,
     borderWidth: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
   },
 
-  assetRow: {
+  row: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#1e293b22",
-  },
-  assetLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  assetSymbol: { fontSize: 15, fontWeight: "800" },
-
-  assetRight: { alignItems: "flex-end" },
-  assetAmount: { fontSize: 15, fontWeight: "800" },
-  assetUsd: { fontSize: 12 },
-
-  txRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#1e293b22",
-  },
-  txType: { fontWeight: "800" },
-  txAmount: { marginTop: 2 },
-
-  txStatus: {
-    fontSize: 12,
-    fontWeight: "800",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-
-  ok: {
-    backgroundColor: "#dcfce7",
-    color: "#16a34a",
-  },
-  pending: {
-    backgroundColor: "#fef3c7",
-    color: "#f59e0b",
   },
 });

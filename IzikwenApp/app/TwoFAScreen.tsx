@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as SecureStore from "expo-secure-store";
 import { api } from "../service/api";
@@ -66,56 +67,69 @@ export default function TwoFAScreen({ navigation }: Props) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Two-Factor Authentication</Text>
-      <Text style={styles.subtitle}>
-        Enter the 6-digit code from your authenticator app
-      </Text>
-
-      <TextInput
-        style={styles.input}
-        keyboardType="number-pad"
-        maxLength={6}
-        value={code}
-        onChangeText={setCode}
-        placeholder="123456"
-        textAlign="center"
-      />
-
-      <TouchableOpacity
-        style={[styles.button, loading && styles.disabled]}
-        onPress={verifyOtp}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? "Verifying..." : "Verify"}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Two-Factor Authentication</Text>
+        <Text style={styles.subtitle}>
+          Enter the 6-digit code from your authenticator app
         </Text>
-      </TouchableOpacity>
-    </View>
+
+        <TextInput
+          style={styles.input}
+          keyboardType="number-pad"
+          maxLength={6}
+          value={code}
+          onChangeText={setCode}
+          placeholder="123456"
+          textAlign="center"
+        />
+
+        <TouchableOpacity
+          style={[styles.button, loading && styles.disabled]}
+          onPress={verifyOtp}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Verifying..." : "Verify"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
-//  Styles
+// Styles
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    padding: 24,
-    justifyContent: "center",
     backgroundColor: "#ffffff",
   },
+
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+
   title: {
     fontSize: 24,
     fontWeight: "600",
     textAlign: "center",
     marginBottom: 8,
   },
+
   subtitle: {
     fontSize: 14,
     color: "#666",
     textAlign: "center",
     marginBottom: 30,
+    maxWidth: 320,
   },
+
   input: {
+    width: "90%",
+    maxWidth: 400,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
@@ -124,14 +138,19 @@ const styles = StyleSheet.create({
     letterSpacing: 6,
     marginBottom: 20,
   },
+
   button: {
+    width: "90%",
+    maxWidth: 400,
     backgroundColor: "#000",
     padding: 14,
     borderRadius: 8,
   },
+
   disabled: {
     opacity: 0.6,
   },
+
   buttonText: {
     color: "#fff",
     fontWeight: "600",

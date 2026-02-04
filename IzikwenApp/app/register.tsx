@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { styles } from "../styles/auth.styles";
 
 export default function RegisterScreen() {
@@ -35,25 +36,18 @@ export default function RegisterScreen() {
       Alert.alert("Missing fields", "Please fill in all fields.");
       return false;
     }
-
     if (!validateEmail(email)) {
       Alert.alert("Invalid email", "Please enter a valid email address.");
       return false;
     }
-
     if (password.length < 8) {
-      Alert.alert(
-        "Weak password",
-        "Password must be at least 8 characters long."
-      );
+      Alert.alert("Weak password", "Password must be at least 8 characters.");
       return false;
     }
-
     if (password !== confirm) {
       Alert.alert("Password mismatch", "Passwords do not match.");
       return false;
     }
-
     return true;
   };
 
@@ -66,19 +60,10 @@ export default function RegisterScreen() {
 
       await onRegister(email.trim(), password);
 
-      Alert.alert(
-        "Account created 🎉",
-        "You can now securely log in.",
-        [
-          {
-            text: "Login",
-            onPress: () => router.replace("/login"),
-          },
-        ]
-      );
+      Alert.alert("Account created 🎉", "You can now log in.", [
+        { text: "Login", onPress: () => router.replace("/login") },
+      ]);
     } catch (err: any) {
-      console.log("REGISTER ERROR:", err);
-
       if (err?.response?.status === 409) {
         Alert.alert("Account exists", "This email is already registered.");
       } else {
@@ -95,76 +80,45 @@ export default function RegisterScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.page}
       >
+        {/* TOP BACK BUTTON */}
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{ marginBottom: 10 }}
+        >
+          <Ionicons name="arrow-back" size={26} color="#000" />
+        </TouchableOpacity>
+
         <Text style={styles.title}>Create your Izikwen account</Text>
         <Text style={styles.subtitle}>
           Secure access to your USDT wallet
         </Text>
 
         <View style={styles.card}>
-          <TextInput
-            placeholder="First name"
-            style={styles.input}
-            placeholderTextColor="#9CA3AF"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
-
-          <TextInput
-            placeholder="Last name"
-            style={styles.input}
-            placeholderTextColor="#9CA3AF"
-            value={lastName}
-            onChangeText={setLastName}
-          />
-
-          <TextInput
-            placeholder="Country"
-            style={styles.input}
-            placeholderTextColor="#9CA3AF"
-            value={country}
-            onChangeText={setCountry}
-          />
-
-          <TextInput
-            placeholder="Email address"
-            style={styles.input}
-            placeholderTextColor="#9CA3AF"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <TextInput
-            placeholder="Password (min 8 characters)"
-            style={styles.input}
-            placeholderTextColor="#9CA3AF"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <TextInput
-            placeholder="Confirm password"
-            style={styles.input}
-            placeholderTextColor="#9CA3AF"
-            secureTextEntry
-            value={confirm}
-            onChangeText={setConfirm}
-          />
+          <TextInput placeholder="First name" style={styles.input} value={firstName} onChangeText={setFirstName} />
+          <TextInput placeholder="Last name" style={styles.input} value={lastName} onChangeText={setLastName} />
+          <TextInput placeholder="Country" style={styles.input} value={country} onChangeText={setCountry} />
+          <TextInput placeholder="Email address" style={styles.input} autoCapitalize="none" value={email} onChangeText={setEmail} />
+          <TextInput placeholder="Password" style={styles.input} secureTextEntry value={password} onChangeText={setPassword} />
+          <TextInput placeholder="Confirm password" style={styles.input} secureTextEntry value={confirm} onChangeText={setConfirm} />
 
           <TouchableOpacity
             style={[styles.button, loading && { opacity: 0.7 }]}
             onPress={handleRegister}
             disabled={loading}
           >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Create account</Text>
-            )}
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Create account</Text>}
           </TouchableOpacity>
         </View>
+
+        {/* BOTTOM LOGIN LINK */}
+        <TouchableOpacity
+          onPress={() => router.replace("/login")}
+          style={{ marginTop: 20 }}
+        >
+          <Text style={{ textAlign: "center", color: "#2563EB", fontWeight: "600" }}>
+            Already have an account? Login
+          </Text>
+        </TouchableOpacity>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
