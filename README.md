@@ -22,15 +22,14 @@ A secure and modern mobile application built with **React Native + TypeScript** 
 - React Native
 - TypeScript
 - Expo
-- NativeWind / Tailwind (if you used it)
+
 
 **Backend**
-- Java Spring Boot *(or Node.js if applicable)*
-- JWT Security
+- Java Spring Boot  Security
 - REST APIs
 
 **Database**
-- PostgreSQL / MySQL / H2 / MongoDB *(choose yours)*
+- PostgreSQL / MySQL 
 
 ---
 ## 📸 Screenshots
