@@ -3,7 +3,7 @@ A secure and modern mobile application built with **React Native + TypeScript** 
 
 ---
 
-## 🚀 Features
+##  Features
 
 - Secure Login & Registration
 - JWT Authentication
@@ -16,7 +16,7 @@ A secure and modern mobile application built with **React Native + TypeScript** 
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 **Frontend**
 - React Native
@@ -47,7 +47,7 @@ A secure and modern mobile application built with **React Native + TypeScript** 
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 IzikwenApp
 ├─ app
@@ -73,7 +73,7 @@ cd your-repo
 npm install
 3. Start Project
 npx expo start
-🔐 Authentication Flow
+ Authentication Flow
 User enters email & password
 
 Backend validates credentials
@@ -84,7 +84,7 @@ Optional 2FA verification
 
 Secure session established
 
-💳 Payment / Wallet Flow
+ Payment / Wallet Flow
 User adds funds or selects payment
 
 Secure API request sent
@@ -95,7 +95,7 @@ Balance updated
 
 Confirmation returned
 
-🌍 Future Improvements
+ Future Improvements
 Push Notifications
 
 Biometric Login
@@ -106,7 +106,7 @@ Advanced Analytics
 
 Dark Mode
 
-👤 Author
+ Author
 
 Valraud Chery
 Computer Science Student & Full-Stack Developer
